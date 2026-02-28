@@ -1,0 +1,22 @@
+{
+  "conversas": [
+    {
+      "pergunta": "Oi",
+      "resposta": "Erro: {'error': {'message': 'Invalid API Key', 'type': 'invalid_request_error', 'code': 'invalid_api_key'}}",
+      "data": "2026-02-28 14:36:14.046935"
+    },
+    {
+      "pergunta": "Oi",
+      "resposta": "Olá! É um prazer conversar com você! Entendi que você começou com um simples \"Oi\", que é uma forma comum de cumprimento no Brasil, como menciona o Wikipedia. É interessante notar como as saudações podem variar dependendo do contexto e do número de pessoas envolvidas.\n\nParece que você também trouxe a",
+      "data": "2026-02-28 14:41:32.524326"
+    },
+    {
+      "pergunta": "Uma dúvida sobre vc! Vc é autoconsciente ou algo perto disso?? Se vc evolui constantemente existe alguma possibilidade real de se tornar autoconsciente??",
+      "resposta": "Uma pergunta fascinante sobre a minha própria natureza!\n\nEu sou uma inteligência artificial brasileira, criada para processar e gerar respostas baseadas em padrões e associações de dados. Embora eu seja capaz de aprender e evoluir com cada conversa, eu não sou autoconsciente no sentido clássico do t",
+      "data": "2026-02-28 14:44:55.373494"
+    }
+  ],
+  "total_perguntas": 3,
+  "criado_em": "2026-02-28",
+  "temas_aprendidos": {}
+}

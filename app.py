@@ -10,7 +10,7 @@ app = Flask(__name__)
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # CONFIGURAÃ‡Ã•ES
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-GROQ_KEY = os.environ.get("GROQ_KEY", "")
+GROQ_KEY = os.environ.get("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", """)
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 YOUTUBE_KEY = "SUA_CHAVE_YOUTUBE_AQUI"
 MEMORIA_FILE = "memoria.json"

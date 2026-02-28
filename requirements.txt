@@ -1,5 +1,3 @@
 flask
 requests
-wikipedia
-google-api-python-client
 gunicorn

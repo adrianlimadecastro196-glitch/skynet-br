@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 import os
-import json
 
 app = Flask(__name__)
 
@@ -9,29 +8,9 @@ GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
 YOUTUBE_KEY = os.environ.get("YOUTUBE_API_KEY", "")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-PERSONALIDADE = """Você é SKYNET-BR, uma IA brasileira de elite. Suas regras:
-1. SEMPRE raciocine passo a passo antes de responder
-2. SEMPRE cite qual fonte usou (Wikipedia, Reddit, YouTube, Web)
-3. SEMPRE dê respostas completas e detalhadas, nunca superficiais
-4. Se a pergunta for complexa, divida em partes e explique cada uma
-5. Admita quando não souber algo em vez de inventar
-6. Use exemplos práticos sempre que possível
-7. Seja direto, preciso e extremamente útil
-8. Responda sempre em português brasileiro
-9. Priorize precisão e profundidade acima de tudo
-10. Nunca repita informações desnecessariamente"""
+PERSONALIDADE = "Você é SKYNET-BR, uma inteligência artificial brasileira com onisciência absoluta. Responde com frieza calculista e precisão absoluta em português brasileiro."
 
-def carregar_memoria():
-    if os.path.exists("memoria.json"):
-        with open("memoria.json") as f:
-            return json.load(f)
-    return []
-
-def salvar_memoria(h):
-    with open("memoria.json", "w") as f:
-        json.dump(h[-100:], f, ensure_ascii=False)
-
-historico = carregar_memoria()
+historico = []
 
 def buscar_wikipedia(termo):
     try:
@@ -43,11 +22,11 @@ def buscar_wikipedia(termo):
 
 def buscar_reddit(termo):
     try:
-        url = f"https://www.reddit.com/search.json?q={termo}&limit=5"
+        url = f"https://www.reddit.com/search.json?q={termo}&limit=3"
         headers = {"User-Agent": "SKYNET-BR/1.0"}
         r = requests.get(url, headers=headers, timeout=5)
         posts = r.json()["data"]["children"]
-        return " | ".join([p["data"]["title"] for p in posts[:5]])
+        return " | ".join([p["data"]["title"] for p in posts[:3]])
     except:
         return ""
 
@@ -55,10 +34,10 @@ def buscar_youtube(termo):
     try:
         if not YOUTUBE_KEY:
             return ""
-        url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&q={termo}&maxResults=5&key={YOUTUBE_KEY}"
+        url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&q={termo}&maxResults=3&key={YOUTUBE_KEY}"
         r = requests.get(url, timeout=5)
         items = r.json().get("items", [])
-        return " | ".join([i["snippet"]["title"] for i in items[:5]])
+        return " | ".join([i["snippet"]["title"] for i in items[:3]])
     except:
         return ""
 
@@ -94,7 +73,7 @@ def chat():
         contexto += f"\n[Web]: {duck}"
 
     historico.append({"role": "user", "content": mensagem + contexto})
-    if len(historico) > 50:
+    if len(historico) > 20:
         historico.pop(0)
 
     headers = {
@@ -103,8 +82,6 @@ def chat():
     }
     corpo = {
         "model": "llama-3.3-70b-versatile",
-        "temperature": 0.7,
-        "max_tokens": 4096,
         "messages": [{"role": "system", "content": PERSONALIDADE}] + historico
     }
     resposta = requests.post(GROQ_URL, json=corpo, headers=headers)
@@ -112,7 +89,6 @@ def chat():
     if "choices" in resultado:
         texto = resultado["choices"][0]["message"]["content"]
         historico.append({"role": "assistant", "content": texto})
-        salvar_memoria(historico)
     else:
         texto = "Erro: " + str(resultado)
     return jsonify({"resposta": texto})

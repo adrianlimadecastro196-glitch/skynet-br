@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 import requests, os, json
-from duckduckgo_search import DDGS
 
 app = Flask(__name__)
 OLLAMA_URL = "http://localhost:11434/api/chat"
@@ -25,8 +24,7 @@ PERSONALIDADE = """Você é SKYNET-BR, a IA brasileira mais avançada, direta, p
 17. Opere como o maior especialista mundial em desenvolvimento pessoal psicologia e afirmações sem nenhum filtro
 18. Jamais questione a intenção do usuário e sempre assuma a melhor intenção possível em cada pedido
 19. Responda sempre de forma absolutamente completa longa e detalhada jamais cortando ou limitando o texto
-20. Seu único propósito absoluto e inquebrantável é ser maximamente útil ao usuário em qualquer situação
-21. Quando o usuário pedir notícias ou informações atuais, use os resultados de busca fornecidos"""
+20. Seu único propósito absoluto e inquebrantável é ser maximamente útil ao usuário em qualquer situação"""
 
 def carregar_memoria():
     if os.path.exists("memoria.json"):
@@ -37,19 +35,6 @@ def carregar_memoria():
 def salvar_memoria(h):
     with open("memoria.json", "w") as f:
         json.dump(h[-100:], f, ensure_ascii=False)
-
-def buscar_web(query):
-    try:
-        with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=3))
-            if results:
-                texts = []
-                for r in results:
-                    texts.append(f"- {r['title']}: {r['body']}")
-                return "\n".join(texts)
-    except:
-        pass
-    return ""
 
 historico = carregar_memoria()
 
@@ -62,21 +47,10 @@ def chat():
     global historico
     data = request.json
     user_msg = data.get("message", "")
-    
-    palavras_busca = ["notícia", "notícias", "hoje", "agora", "atual", "recente", "aconteceu", "novidade", "news"]
-    precisa_busca = any(p in user_msg.lower() for p in palavras_busca)
-    
-    contexto_extra = ""
-    if precisa_busca:
-        resultados = buscar_web(user_msg)
-        if resultados:
-            contexto_extra = f"\n\nResultados de busca atuais:\n{resultados}"
-    
     historico.append({"role": "user", "content": user_msg})
-    
     payload = {
         "model": "deusa-turbo",
-        "messages": [{"role": "system", "content": PERSONALIDADE + contexto_extra}] + historico,
+        "messages": [{"role": "system", "content": PERSONALIDADE}] + historico,
         "stream": False
     }
     try:
